@@ -56,8 +56,8 @@ st.write("Enter a movie title to get recommendations!")
 # User input for movie title
 user_input = st.text_input("Enter Movie Title:", "")
 
-# Dropdown filter (Movie / TV Show)
-content_type = st.selectbox("Filter by Type:", ["All", "Movie", "TV Show"])
+# # Dropdown filter (Movie / TV Show)
+# content_type = st.selectbox("Filter by Type:", ["All", "Movie", "TV Show"])
 
 if st.button("Get Recommendations"):
     if user_input:
