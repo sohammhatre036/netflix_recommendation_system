@@ -11,7 +11,7 @@ df = pd.read_csv(url)
 df.fillna("", inplace=True)
 
 # Combine relevant features into a single string
-df["combined_features"] = df["cast"] + " " + df["listed_in"] + " " + df["description"] + " " + df["country"]
+df["combined_features"] = df["cast"] + " " + df["listed_in"] + " " + df["description"] 
 
 # Text vectorization using TF-IDF
 tfidf = TfidfVectorizer(stop_words="english")
