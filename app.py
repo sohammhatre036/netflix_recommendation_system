@@ -51,17 +51,16 @@ def get_recommendations(title, content_type="All", num_recommendations=5):
 
 # Streamlit UI
 st.title("🎬 Movie Recommendation System")
-st.write("Enter a movie title to get recommendations!")
+st.write("Start typing a movie name to get suggestions!")
 
-# User input for movie title
-user_input = st.text_input("Enter Movie Title:", "")
+# **Movie Title Autocomplete**
+movie_list = df["title"].tolist()
+selected_movie = st.selectbox("Enter or select a movie:", [""] + movie_list)
 
-# # Dropdown filter (Movie / TV Show)
-# content_type = st.selectbox("Filter by Type:", ["All", "Movie", "TV Show"])
-
+# Dropdown filter (Movie / TV Show)
 if st.button("Get Recommendations"):
-    if user_input:
-        recommendations = get_recommendations(user_input, num_recommendations=5)
+    if selected_movie:
+        recommendations = get_recommendations(selected_movie, num_recommendations=5)
 
         if isinstance(recommendations, list):
             st.write(recommendations[0])  # Display error message
@@ -73,4 +72,4 @@ if st.button("Get Recommendations"):
                 st.write("---")
 
     else:
-        st.warning("⚠️ Please enter a movie title.")
+        st.warning("⚠️ Please select or type a movie title.")
