@@ -4,7 +4,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load dataset
-df = pd.read_csv("netflix_titles_cleaned.csv")  # Update the file path if needed
+url = "https://raw.githubusercontent.com/sohammhatre036/netflix_recommendation_system/main/netflix_titles_cleaned.csv"
+df = pd.read_csv(url)
+
 
 # Fill missing values
 df["cast"] = df["cast"].fillna("")
