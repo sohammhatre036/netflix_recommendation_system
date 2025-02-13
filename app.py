@@ -7,11 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 url = "https://raw.githubusercontent.com/sohammhatre036/netflix_recommendation_system/main/netflix_titles_cleaned.csv"
 df = pd.read_csv(url)
 
-
 # Fill missing values
-df["cast"] = df["cast"].fillna("")
-df["listed_in"] = df["listed_in"].fillna("")
-df["description"] = df["description"].fillna("")
+df.fillna("", inplace=True)
 
 # Combine relevant features into a single string
 df["combined_features"] = df["cast"] + " " + df["listed_in"] + " " + df["description"] + " " + df["country"]
@@ -24,14 +21,17 @@ tfidf_matrix = tfidf.fit_transform(df["combined_features"])
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 # Function to get recommendations
-def get_recommendations(title, num_recommendations=5):
+def get_recommendations(title, content_type="All", num_recommendations=5):
     title = title.strip().lower()
     
-    if title not in df["title"].str.lower().values:
+    # Find closest match
+    matching_titles = df[df["title"].str.lower().str.contains(title, na=False)]
+    
+    if matching_titles.empty:
         return ["❌ Movie not found! Try another title."]
     
-    idx = df[df["title"].str.lower() == title].index[0]
-    
+    idx = matching_titles.index[0]
+
     # Get similarity scores for all items
     sim_scores = list(enumerate(cosine_sim[idx]))
     
@@ -40,8 +40,14 @@ def get_recommendations(title, num_recommendations=5):
     
     # Get recommended movie indices
     movie_indices = [i[0] for i in sim_scores]
-    
-    return df["title"].iloc[movie_indices].tolist()
+
+    # Filter by type (Movie/TV Show)
+    if content_type != "All":
+        movie_indices = [i for i in movie_indices if df.iloc[i]["type"] == content_type]
+
+    recommendations = df.iloc[movie_indices][["title", "country", "description"]]
+
+    return recommendations if not recommendations.empty else ["⚠️ No similar movies found."]
 
 # Streamlit UI
 st.title("🎬 Movie Recommendation System")
@@ -50,11 +56,21 @@ st.write("Enter a movie title to get recommendations!")
 # User input for movie title
 user_input = st.text_input("Enter Movie Title:", "")
 
+# Dropdown filter (Movie / TV Show)
+content_type = st.selectbox("Filter by Type:", ["All", "Movie", "TV Show"])
+
 if st.button("Get Recommendations"):
     if user_input:
-        recommendations = get_recommendations(user_input, num_recommendations=5)
-        st.write("🎥 **Recommended Movies:**")
-        for movie in recommendations:
-            st.write(f"- {movie}")
+        recommendations = get_recommendations(user_input, content_type, num_recommendations=5)
+
+        if isinstance(recommendations, list):
+            st.write(recommendations[0])  # Display error message
+        else:
+            st.write("🎥 **Recommended Titles:**")
+            for _, row in recommendations.iterrows():
+                st.write(f"**{row['title']}** ({row['country']})")
+                st.write(f"📜 {row['description'][:200]}...")  # Show first 200 characters
+                st.write("---")
+
     else:
         st.warning("⚠️ Please enter a movie title.")
