@@ -61,7 +61,7 @@ user_input = st.text_input("Enter Movie Title:", "")
 
 if st.button("Get Recommendations"):
     if user_input:
-        recommendations = get_recommendations(user_input, content_type, num_recommendations=5)
+        recommendations = get_recommendations(user_input, num_recommendations=5)
 
         if isinstance(recommendations, list):
             st.write(recommendations[0])  # Display error message
