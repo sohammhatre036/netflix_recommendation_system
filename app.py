@@ -71,8 +71,8 @@ if st.button("🔍 Get Recommendations"):
             st.subheader("🎥 **Recommended Titles:**")
             for _, row in recommendations.iterrows():
                 st.markdown(f"**🎬 {row['title']}** ({row['country']})")
-                st.write(f"📜 {row['description'][:1000]}...")  # Show first 200 characters
-                st.write(f"📜 {row['cast'][:1000]}...")  # Show first 200 characters
+                st.write(f"📜 {row['description'][:300]}...")  # Show first 200 characters
+                st.write(f"Cast :  {row['cast'][:300]}...")  # Show first 200 characters
 
                 st.write("---")
     else:
