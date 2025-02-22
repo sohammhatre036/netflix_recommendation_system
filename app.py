@@ -17,7 +17,7 @@ df = pd.read_csv(url)
 df.fillna("", inplace=True)
 
 # Combine relevant features into a single string
-df["combined_features"] = df["cast"] + " " + df["listed_in"] + " " + df["description"] 
+df["combined_features"] = df["cast"] + " " + df["listed_in"] + " " + df["description"] + " " + df["country"]
 
 # Text vectorization using TF-IDF
 tfidf = TfidfVectorizer(stop_words="english")
@@ -27,7 +27,7 @@ tfidf_matrix = tfidf.fit_transform(df["combined_features"])
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 # Function to get recommendations
-def get_recommendations(title, content_type="All", num_recommendations=5):
+def get_recommendations(title, cosine_sim=cosine_sim, num_recommendations=10):
     title = title.strip().lower()
     
     # Find closest match
@@ -47,10 +47,6 @@ def get_recommendations(title, content_type="All", num_recommendations=5):
     # Get recommended movie indices
     movie_indices = [i[0] for i in sim_scores]
 
-    # Filter by type (Movie / TV Show)
-    if content_type != "All":
-        movie_indices = [i for i in movie_indices if df.iloc[i]["type"] == content_type]
-
     recommendations = df.iloc[movie_indices][["title", "country", "description"]]
 
     return recommendations if not recommendations.empty else ["⚠️ No similar movies found."]
@@ -62,18 +58,15 @@ st.set_page_config(page_title="Netflix Recommender - Code Hulk", page_icon=netfl
 st.image(netflix_logo, width=80)
 st.title("🎬 Netflix Movie Recommendation System")
 st.markdown("### By **Code Hulk**")
-st.write("Start typing a movie name to get  recommendations!")
+st.write("Start typing a movie name to get AI-powered recommendations!")
 
 # Movie Title Autocomplete
 movie_list = df["title"].tolist()
 selected_movie = st.selectbox("Enter or select a movie:", [""] + movie_list)
 
-# Dropdown filter (Movie / TV Show)
-# content_type = st.selectbox("Filter by type:", ["All", "Movie", "TV Show"])
-
 if st.button("🔍 Get Recommendations"):
     if selected_movie:
-        recommendations = get_recommendations(selected_movie, num_recommendations=5)
+        recommendations = get_recommendations(selected_movie, num_recommendations=10)
 
         if isinstance(recommendations, list):
             st.error(recommendations[0])  # Display error message
@@ -88,4 +81,4 @@ if st.button("🔍 Get Recommendations"):
 
 # Footer
 st.markdown("---")
-
+st.markdown("### 💡 Built with ❤️ by **Code Hulk** 🚀")
