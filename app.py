@@ -44,7 +44,7 @@ def get_recommendations(title, cosine_sim=cosine_sim, num_recommendations=10):
     # Get recommended movie indices
     movie_indices = [i[0] for i in sim_scores]
 
-    recommendations = df.iloc[movie_indices][["title", "country", "description"]]
+    recommendations = df.iloc[movie_indices][["title", "country", "description","cast"]]
 
     return recommendations if not recommendations.empty else ["⚠️ No similar movies found."]
 
@@ -71,7 +71,7 @@ if st.button("🔍 Get Recommendations"):
             st.subheader("🎥 **Recommended Titles:**")
             for _, row in recommendations.iterrows():
                 st.markdown(f"**🎬 {row['title']}** ({row['country']})")
-                st.write(f"📜 {row['description'][:200]}...")  # Show first 200 characters
+                st.write(f"📜 {row['description'][:1000]}...")  # Show first 200 characters
                 st.write("---")
     else:
         st.warning("⚠️ Please select or type a movie title.")
