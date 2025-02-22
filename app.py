@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from PIL import Image
+
+# Team Code Hulk
+
+# Load Netflix logo
+netflix_logo = "https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg"
 
 # Load dataset
 url = "https://raw.githubusercontent.com/sohammhatre036/netflix_recommendation_system/main/netflix_titles_cleaned.csv"
@@ -41,7 +47,7 @@ def get_recommendations(title, content_type="All", num_recommendations=5):
     # Get recommended movie indices
     movie_indices = [i[0] for i in sim_scores]
 
-    # Filter by type (Movie/TV Show)
+    # Filter by type (Movie / TV Show)
     if content_type != "All":
         movie_indices = [i for i in movie_indices if df.iloc[i]["type"] == content_type]
 
@@ -50,26 +56,36 @@ def get_recommendations(title, content_type="All", num_recommendations=5):
     return recommendations if not recommendations.empty else ["⚠️ No similar movies found."]
 
 # Streamlit UI
-st.title("🎬 Movie Recommendation System")
-st.write("Start typing a movie name to get suggestions!")
+st.set_page_config(page_title="Netflix Recommender - Code Hulk", page_icon=netflix_logo, layout="wide")
 
-# **Movie Title Autocomplete**
+# Netflix Logo
+st.image(netflix_logo, width=80)
+st.title("🎬 Netflix Movie Recommendation System")
+st.markdown("### By **Code Hulk**")
+st.write("Start typing a movie name to get AI-powered recommendations!")
+
+# Movie Title Autocomplete
 movie_list = df["title"].tolist()
 selected_movie = st.selectbox("Enter or select a movie:", [""] + movie_list)
 
 # Dropdown filter (Movie / TV Show)
-if st.button("Get Recommendations"):
+content_type = st.selectbox("Filter by type:", ["All", "Movie", "TV Show"])
+
+if st.button("🔍 Get Recommendations"):
     if selected_movie:
-        recommendations = get_recommendations(selected_movie, num_recommendations=5)
+        recommendations = get_recommendations(selected_movie, content_type, num_recommendations=5)
 
         if isinstance(recommendations, list):
-            st.write(recommendations[0])  # Display error message
+            st.error(recommendations[0])  # Display error message
         else:
-            st.write("🎥 **Recommended Titles:**")
+            st.subheader("🎥 **Recommended Titles:**")
             for _, row in recommendations.iterrows():
-                st.write(f"**{row['title']}** ({row['country']})")
+                st.markdown(f"**🎬 {row['title']}** ({row['country']})")
                 st.write(f"📜 {row['description'][:200]}...")  # Show first 200 characters
                 st.write("---")
-
     else:
         st.warning("⚠️ Please select or type a movie title.")
+
+# Footer
+st.markdown("---")
+st.markdown("### 💡 Built with  by **Code Hulk** 🚀")
