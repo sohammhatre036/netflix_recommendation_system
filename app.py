@@ -73,7 +73,7 @@ selected_movie = st.selectbox("Enter or select a movie:", [""] + movie_list)
 
 if st.button("🔍 Get Recommendations"):
     if selected_movie:
-        recommendations = get_recommendations(selected_movie, content_type, num_recommendations=5)
+        recommendations = get_recommendations(selected_movie, num_recommendations=5)
 
         if isinstance(recommendations, list):
             st.error(recommendations[0])  # Display error message
@@ -88,4 +88,4 @@ if st.button("🔍 Get Recommendations"):
 
 # Footer
 st.markdown("---")
-st.markdown("### 💡 Built with  by **Code Hulk** 🚀")
+
