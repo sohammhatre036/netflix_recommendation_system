@@ -62,14 +62,14 @@ st.set_page_config(page_title="Netflix Recommender - Code Hulk", page_icon=netfl
 st.image(netflix_logo, width=80)
 st.title("🎬 Netflix Movie Recommendation System")
 st.markdown("### By **Code Hulk**")
-st.write("Start typing a movie name to get AI-powered recommendations!")
+st.write("Start typing a movie name to get  recommendations!")
 
 # Movie Title Autocomplete
 movie_list = df["title"].tolist()
 selected_movie = st.selectbox("Enter or select a movie:", [""] + movie_list)
 
 # Dropdown filter (Movie / TV Show)
-content_type = st.selectbox("Filter by type:", ["All", "Movie", "TV Show"])
+# content_type = st.selectbox("Filter by type:", ["All", "Movie", "TV Show"])
 
 if st.button("🔍 Get Recommendations"):
     if selected_movie:
