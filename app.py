@@ -59,7 +59,7 @@ st.write("Start typing a movie name to get AI-powered recommendations!")
 
 # Movie Title Autocomplete
 movie_list = df["title"].tolist()
-selected_movie = st.selectbox("Enter or select a movie:", [""] + movie_list)
+selected_movie = st.selectbox("Enter or select a movie / Tv Show:", [""] + movie_list)
 
 if st.button("🔍 Get Recommendations"):
     if selected_movie:
