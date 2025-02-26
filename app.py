@@ -53,9 +53,9 @@ st.set_page_config(page_title="Netflix Recommender - Code Hulk", page_icon=netfl
 
 # Netflix Logo
 st.image(netflix_logo, width=80)
-st.title("🎬 Netflix Movie Recommendation System")
+st.title("🎬 Netflix Movies  / Tv Show Recommendation System")
 st.markdown("### By **Code Hulk**")
-st.write("Start typing a movie name to get AI-powered recommendations!")
+st.write("Start typing a movie / tv show name to get  recommendations!")
 
 # Movie Title Autocomplete
 movie_list = df["title"].tolist()
