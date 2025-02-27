@@ -25,12 +25,14 @@ st.set_page_config(page_title="Netflix Recommender", page_icon="🎬", layout="w
 st.title("🎬 Netflix Movie & TV Show Recommender")
 st.markdown("### **Find what to watch next!**")
 
-# User selects whether they want Movie or TV Show recommendations
-content_type = st.radio("Do you want recommendations for a **Movie** or a **TV Show**?", ("Movie", "TV Show"))
+# User selects content type first
+content_type = st.radio("Do you want to search for a **Movie** or a **TV Show**?", ("Movie", "TV Show"))
 
-# Movie Title Autocomplete
-movie_list = df["title"].tolist()
-selected_movie = st.selectbox("Enter or select a Movie/TV Show:", [""] + movie_list)
+# Filter dataset based on selection
+filtered_df = df[df["type"] == content_type]
+
+# Movie/TV Show selection dropdown (only shows relevant type)
+selected_movie = st.selectbox(f"Select a {content_type}:", [""] + filtered_df["title"].tolist())
 
 # Function to get recommendations
 def get_recommendations(title, content_type, df, cosine_sim, num_recommendations=10):
@@ -45,7 +47,7 @@ def get_recommendations(title, content_type, df, cosine_sim, num_recommendations
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:]  # Exclude itself
 
-    # Get recommended movie/show indices
+    # Get recommended indices
     movie_indices = [i[0] for i in sim_scores]
 
     # Filter by chosen type (Movie or TV Show)
@@ -70,15 +72,15 @@ if st.button("🔍 Get Recommendations"):
         if isinstance(recommendations, list):
             st.error(recommendations[0])  # Display error message
         else:
-            st.subheader("🎥 **Recommended Titles:**")
+            st.subheader(f"🎥 **Recommended {content_type}s:**")
             for _, row in recommendations.iterrows():
                 st.markdown(f"**🎬 {row['title']}** ({row['country']})")
-                st.write(f"📜 {row['description'][:500]}...")  # Show first 300 characters
+                st.write(f"📜 {row['description'][:300]}...")  # Show first 300 characters
                 st.write(f"🎭 **Genres:** {row['listed_in']}")
-                st.write(f"🎭 **Cast:** {row['cast'][:300]}...")  # Show first 300 characters
+                st.write(f"👥 **Cast:** {row['cast'][:300]}...")  # Show first 300 characters
                 st.write("---")
     else:
-        st.warning("⚠️ Please select or type a Movie/TV Show title.")
+        st.warning(f"⚠️ Please select a {content_type} title.")
 
 # Footer
 st.markdown("---")
