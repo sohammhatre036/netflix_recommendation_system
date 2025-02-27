@@ -56,13 +56,13 @@ def get_recommendations(title, content_type, df, cosine_sim, num_recommendations
 
     # Ensure genre relevance
     selected_genres = set(df.loc[idx, "listed_in"].split(", "))
-    
+
     def genre_match(genres):
         return any(genre in selected_genres for genre in genres.split(", "))
 
     filtered_recommendations = filtered_recommendations[filtered_recommendations["listed_in"].apply(genre_match)]
 
-    return filtered_recommendations.head(num_recommendations)[["title", "country", "listed_in", "description", "cast"]]
+    return filtered_recommendations.head(num_recommendations)[["title", "country", "listed_in", "duration", "description", "cast"]]
 
 # Show recommendations when the user clicks the button
 if st.button("🔍 Get Recommendations"):
@@ -73,12 +73,17 @@ if st.button("🔍 Get Recommendations"):
             st.error(recommendations[0])  # Display error message
         else:
             st.subheader(f"🎥 **Recommended {content_type}s:**")
-            for _, row in recommendations.iterrows():
-                st.markdown(f"**🎬 {row['title']}** ({row['country']})")
-                st.write(f"📜 {row['description'][:300]}...")  # Show first 300 characters
-                st.write(f"🎭 **Genres:** {row['listed_in']}")
-                st.write(f"👥 **Cast:** {row['cast'][:300]}...")  # Show first 300 characters
-                st.write("---")
+            
+            # Display results in a table format
+            st.dataframe(recommendations.rename(columns={
+                "title": "Title", 
+                "country": "Country",
+                "listed_in": "Genres",
+                "duration": "Duration",
+                "description": "Description",
+                "cast": "Cast"
+            }))
+
     else:
         st.warning(f"⚠️ Please select a {content_type} title.")
 
